@@ -65,3 +65,17 @@ Today, the foundational security and version control aspects of the project were
 * **IAM User MFA Enabled:** Multi-Factor Authentication was enabled for console access for the new IAM user.
 * **Git Version Control Initialized:** A local Git repository was set up and connected to a new, empty remote GitHub repository, with an initial commit pushed.
 * **Documentation Started:** This `README.md` was created and updated to log all the foundational setup steps and the secure practices implemented.
+
+## Today's Summary (Day 2: AWS S3 for Centralized Log Storage)
+
+Today, the foundation for scalable and durable log storage was established using AWS S3.
+
+* **S3 Concepts Explored:** Gained a thorough understanding of S3 buckets, objects, keys, AWS Regions, and the exceptional "11 nines" data durability.
+* **Storage Classes Understood:** Investigated S3 Standard, S3 Intelligent-Tiering (highlighting its cost-saving benefits for unpredictable log data), and S3 Standard-IA, demonstrating an understanding of economic viability in cloud security.
+* **Secure S3 Buckets Created:**
+    * Two S3 buckets were created in the `[YOUR_CHOSEN_AWS_REGION_HERE]` region:
+        * `yourname-security-raw-logs` (e.g., `campbellbaxley-security-raw-logs`) for raw, untransformed logs.
+        * `yourname-security-processed-data` (e.g., `campbellbaxley-security-processed-data`) for transformed data or analytics results.
+    * **Crucially, "Block all public access" was enabled for both buckets**, enforcing a strict security posture.
+    * Bucket Versioning and Server-Side Encryption (SSE-S3) were enabled for enhanced data protection.
+* **Manual Operations Tested:** Successfully uploaded and downloaded small dummy files to the raw-logs bucket via the AWS Management Console to verify access.
