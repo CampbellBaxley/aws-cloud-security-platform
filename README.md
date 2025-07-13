@@ -36,7 +36,6 @@ Today, the foundational security and version control aspects of the project were
 * **IAM User MFA Enabled:** Multi-Factor Authentication was enabled for console access for the new IAM user.
 * **Git Version Control Initialized:** A local Git repository was set up and connected to a new, empty remote GitHub repository, with an initial commit pushed.
 * **Documentation Started:** This `README.md` was created and updated to log all the foundational setup steps and the secure practices implemented.
-<<<<<<< HEAD
 
 ## Today's Summary (Day 2: AWS S3 for Centralized Log Storage)
 
@@ -51,5 +50,68 @@ Today, the foundation for scalable and durable log storage was established using
     * **Crucially, "Block all public access" was enabled for both buckets**, enforcing a strict security posture.
     * Bucket Versioning and Server-Side Encryption (SSE-S3) were enabled for enhanced data protection.
 * **Manual Operations Tested:** Successfully uploaded and downloaded small dummy files to the raw-logs bucket via the AWS Management Console to verify access.
-=======
->>>>>>> 30ce66505374f809c061f069e94d266bd70c80a2
+
+## Day 3: Python Boto3 for S3 Interaction & Credential Management
+
+Today, the project shifted from manual console operations to programmatic interaction with AWS S3 using Python and the Boto3 library, focusing on secure credential handling.
+
+### Environment Setup
+-   **Python 3.8+** ensured to be installed.
+-   A **virtual environment** (`python -m venv .venv`) was created and activated within the project directory to manage dependencies:
+    -   `python -m venv .venv` (to create)
+    -   `source .venv/bin/activate` (macOS/Linux) or `.venv\Scripts\activate` (Windows) (to activate)
+-   The **Boto3 library** for AWS SDK in Python was installed using pip (`pip install boto3`) within the active virtual environment.
+
+### Secure AWS Credential Configuration
+-   **Critical Step:** AWS credentials (Access Key ID and Secret Access Key for the `Campbell IAM` user) were verified to be **securely configured locally** in `~/.aws/credentials` (or as environment variables). This setup is paramount for Boto3 to authenticate with AWS services **without hardcoding sensitive information into the script**, preventing a common and critical security vulnerability.
+
+### S3 Interaction Script (`s3_utils.py`)
+-   A Python script, `s3_utils.py`, was developed to encapsulate programmatic S3 operations using Boto3.
+-   **Key Functions Implemented:**
+    -   `list_s3_buckets()`: Lists all accessible S3 buckets.
+        ```python
+        # Example Docstring for list_s3_buckets
+        def list_s3_buckets():
+            """
+            Lists all S3 buckets accessible by the configured AWS credentials.
+            Returns:
+                list: A list of bucket names if successful, None otherwise.
+            """
+            # ... (function implementation)
+        ```
+    -   `upload_file_to_s3(file_path, bucket_name, object_name)`: Uploads a local file to a specified S3 bucket.
+        ```python
+        # Example Docstring for upload_file_to_s3
+        def upload_file_to_s3(file_path, bucket_name, object_name=None):
+            """
+            Uploads a file to an S3 bucket.
+
+            Args:
+                file_path (str): Path to the local file to upload.
+                bucket_name (str): Name of the S3 bucket.
+                object_name (str, optional): S3 object name. If not specified, file_path basename is used.
+
+            Returns:
+                bool: True if upload is successful, False otherwise.
+            """
+            # ... (function implementation)
+        ```
+    -   `download_file_from_s3(bucket_name, object_name, download_path)`: Downloads a file from an S3 bucket to a local path.
+        ```python
+        # Example Docstring for download_file_from_s3
+        def download_file_from_s3(bucket_name, object_name, download_path):
+            """
+            Downloads a file from an S3 bucket to a local path.
+
+            Args:
+                bucket_name (str): Name of the S3 bucket.
+                object_name (str): S3 object name to download.
+                download_path (str): Local path where the file will be saved.
+
+            Returns:
+                bool: True if download is successful, False otherwise.
+            """
+            # ... (function implementation)
+        ```
+-   The `s3_utils.py` script was thoroughly **tested** by listing existing buckets, uploading a dummy file to the `yourname-security-raw-logs` bucket, and then successfully downloading it back.
+
