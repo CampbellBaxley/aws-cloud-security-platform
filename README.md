@@ -115,3 +115,16 @@ Today, the project shifted from manual console operations to programmatic intera
         ```
 -   The `s3_utils.py` script was thoroughly **tested** by listing existing buckets, uploading a dummy file to the `yourname-security-raw-logs` bucket, and then successfully downloading it back.
 
+## Day 4: API Activity Monitoring (AWS CloudTrail)
+
+Today, a critical component for security auditing and incident response was implemented: AWS CloudTrail.
+
+* **CloudTrail Understanding:** Gained a deep understanding of CloudTrail's role as an activity recorder, differentiating between **Management Events** (control plane actions like resource creation/modification) and **Data Events** (data plane actions like S3 object access).
+* **Dedicated Trail Creation:** A new CloudTrail trail named `yourname-security-trail` (e.g., `campbellbaxley-security-trail`) was created, configured to apply to all regions in the AWS account.
+* **S3 Log Delivery:** The trail was configured to deliver logs to the `yourname-security-raw-logs` S3 bucket, ensuring long-term, centralized storage of audit logs.
+* **Comprehensive Event Logging Enabled:**
+    * **Management events (Read/Write)** are enabled to capture all control plane activities.
+    * **S3 Data Events are explicitly enabled for the `yourname-security-raw-logs` bucket (both Read and Write operations)**. This is a critical security feature, providing granular visibility into data access patterns, vital for detecting data exfiltration and conducting forensic investigations.
+* **Log File Integrity Validation Enabled:** This crucial security feature was enabled to prevent attackers from tampering with audit logs, thereby ensuring the reliability and trustworthiness of forensic evidence.
+* **CloudWatch Logs Integration (Optional but recommended):** The trail was configured to send logs to a new CloudWatch Logs group (`yourname-cloudtrail-logs`, e.g., `campbellbaxley-cloudtrail-logs`) for real-time monitoring and easier log analysis.
+* **Log Delivery Verification:** Confirmed CloudTrail log delivery by performing dummy actions in the AWS account (e.g., creating/deleting an S3 bucket, uploading/downloading files to `yourname-security-raw-logs`) and then verifying the presence of corresponding `.json.gz` log files in the designated S3 bucket and CloudWatch Logs.
