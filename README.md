@@ -128,3 +128,19 @@ Today, a critical component for security auditing and incident response was impl
 * **Log File Integrity Validation Enabled:** This crucial security feature was enabled to prevent attackers from tampering with audit logs, thereby ensuring the reliability and trustworthiness of forensic evidence.
 * **CloudWatch Logs Integration (Optional but recommended):** The trail was configured to send logs to a new CloudWatch Logs group (`yourname-cloudtrail-logs`, e.g., `campbellbaxley-cloudtrail-logs`) for real-time monitoring and easier log analysis.
 * **Log Delivery Verification:** Confirmed CloudTrail log delivery by performing dummy actions in the AWS account (e.g., creating/deleting an S3 bucket, uploading/downloading files to `yourname-security-raw-logs`) and then verifying the presence of corresponding `.json.gz` log files in the designated S3 bucket and CloudWatch Logs.
+
+## Day 5: Network Traffic Visibility (AWS VPC Flow Logs)
+
+Today, network-level visibility was established by configuring AWS VPC Flow Logs to capture IP traffic information within the Virtual Private Cloud (VPC).
+
+* **VPC Flow Logs Understanding:** Gained a deep understanding of VPC Flow Logs' role in capturing IP traffic data (source/destination IPs, ports, protocols, bytes, action) within the VPC. Recognized its utility for network troubleshooting and, critically, for identifying network-based attacks like port scans or unauthorized connections that might otherwise go undetected.
+* **S3 Bucket Policy Update:** The `yourname-security-raw-logs` S3 bucket policy was updated to explicitly grant `delivery.logs.amazonaws.com` (the VPC Flow Logs service principal) the necessary permissions (`s3:PutObject`) to write flow log files into a dedicated `VPCFlowLogs/` prefix within the bucket.
+* **IAM Role for CloudWatch Logs:** A dedicated IAM role (`yourname-VPCFlowLogs-CloudWatchLogs-Role`, e.g., `campbellbaxley-VPCFlowLogs-CloudWatchLogs-Role`) was meticulously created, granting VPC Flow Logs permissions to publish logs to Amazon CloudWatch Logs. This involved:
+    * Creating the role using a generic service (e.g., EC2) as a placeholder.
+    * **Manually editing its trust policy** to explicitly allow `vpc-flow-logs.amazonaws.com` to assume the role.
+    * Attaching an **inline policy** with granular permissions (`logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`, `logs:DescribeLogGroups`, `logs:DescribeLogStreams`) scoped to the `yourname-vpc-flow-logs` CloudWatch Logs group.
+* **Dual Flow Log Configuration:**
+    * **Default VPC Identified:** The primary Default VPC was identified as the target for flow log capture.
+    * **Flow Log 1 (to CloudWatch Logs):** A flow log named `yourname-default-vpc-flow-log-to-cloudwatch` was configured for the Default VPC, capturing **All traffic** and sending logs to a new CloudWatch Logs group (`yourname-vpc-flow-logs`, e.g., `campbellbaxley-vpc-flow-logs`), using the dedicated IAM role. This enables real-time analysis and alerting.
+    * **Flow Log 2 (to S3 Bucket):** A second flow log named `yourname-default-vpc-flow-log-to-s3` was configured for the *same* Default VPC, also capturing **All traffic** and sending logs to the `yourname-security-raw-logs` S3 bucket. This ensures long-term, cost-effective storage for forensic and compliance purposes.
+* **Log Delivery Verification:** Confirmed VPC Flow Log delivery by checking for new log entries in the `yourname-vpc-flow-logs` CloudWatch Log group and verifying the presence of gzipped log files in the `yourname-security-raw-logs` S3 bucket.
