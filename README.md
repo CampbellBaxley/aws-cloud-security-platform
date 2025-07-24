@@ -145,7 +145,7 @@ Today, network-level visibility was established by configuring AWS VPC Flow Logs
     * **Flow Log 2 (to S3 Bucket):** A second flow log named `yourname-default-vpc-flow-log-to-s3` was configured for the *same* Default VPC, also capturing **All traffic** and sending logs to the `yourname-security-raw-logs` S3 bucket. This ensures long-term, cost-effective storage for forensic and compliance purposes.
 * **Log Delivery Verification:** Confirmed VPC Flow Log delivery by checking for new log entries in the `yourname-vpc-flow-logs` CloudWatch Log group and verifying the presence of gzipped log files in the `yourname-security-raw-logs` S3 bucket.
 
-#### Day 6: Ingesting CloudTrail & VPC Flow Logs into CloudWatch Logs
+## Day 6: Ingesting CloudTrail & VPC Flow Logs into CloudWatch Logs
 
 The goal for this day is to consolidate CloudTrail and VPC Flow Logs into CloudWatch Logs for unified monitoring and analysis. This involves understanding CloudWatch Logs architecture, including log groups and log streams, and performing basic CloudWatch Logs Insights queries. The platforms and services used are the AWS Management Console, AWS CloudWatch Logs, AWS CloudTrail, and AWS VPC Flow Logs.
 
