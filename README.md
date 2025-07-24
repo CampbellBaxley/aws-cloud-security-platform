@@ -156,3 +156,17 @@ The integration of CloudTrail logs into CloudWatch Logs, configured on Day 4, wa
 To familiarize oneself with the log structure and query language, basic queries were executed in the CloudWatch Logs Insights console (e.g., `fields @timestamp, @message | limit 20`). Key fields for both log types were identified: `userIdentity`, `eventSource`, `eventName`, `sourceIPAddress` for CloudTrail, and `srcAddr`, `dstAddr`, `action`, `dstPort` for VPC Flow Logs. This process lays the groundwork for creating automated metric filters and alarms in subsequent steps, demonstrating an understanding of the foundational nature of centralized logging for automated security operations.
 
 This day's work centralizes security log data from AWS CloudTrail and VPC Flow Logs into Amazon CloudWatch Logs, enabling unified monitoring and initial log analysis using CloudWatch Logs Insights.
+
+## Day 7: Creating CloudWatch Metric Filters for Suspicious Activities
+
+The objective for this day was to define specific patterns within security logs to identify and count suspicious activities using CloudWatch Metric Filters. This involved acquiring skills in CloudWatch Metric Filter syntax, recognizing critical log patterns ("Access Denied," "Rejected" connections), and associating metrics with these filters. The platforms and services used were the AWS Management Console and AWS CloudWatch Logs.
+
+The process began by understanding how CloudWatch Metric Filters convert raw log data into numerical metrics that can be graphed and used to trigger alarms. This transformation from unstructured log data to quantifiable metrics is crucial for establishing baselines, identifying anomalies, and enabling performance-based alerting.
+
+A metric filter was created for "Access Denied" errors from CloudTrail logs. This involved navigating to the `campbellbaxley-cloudtrail-logs` CloudWatch Logs group and defining a filter pattern to detect "Access Denied" errors: `{ ($.errorCode = "AccessDenied") || ($.errorMessage = "*Access Denied*") }`. A descriptive `Filter Name` (`AccessDeniedErrors`), `Metric Namespace` (`SecurityMetrics`), and `Metric Name` (`CloudTrailAccessDeniedCount`) were assigned, with `Metric Value` set to 1. This approach directly translates threat intelligence into actionable detection rules, as "Access Denied" errors are common indicators of compromise.
+
+Similarly, a metric filter was created for "Rejected Connections" from VPC Flow Logs. This involved navigating to the `campbellbaxley-vpc-flow-logs` CloudWatch Logs group and defining a filter pattern to detect rejected network connections: `{ $.action = "REJECT" }`. A `Filter Name` (`RejectedNetworkTraffic`), `Metric Namespace` (`SecurityMetrics`), and `Metric Name` (`VPCFlowRejectedCount`) were assigned, with `Metric Value` set to 1. Rejected connections can signify port scans or blocked exfiltration attempts, making this a vital detection point.
+
+To validate the filters, actions expected to trigger them (e.g., attempting to access a non-existent S3 bucket for Access Denied; attempting blocked network connections from an EC2 instance for Rejected Connections) were performed, and the corresponding metrics observed in the CloudWatch Metrics console.
+
+This day's work demonstrates the development and implementation of CloudWatch Metric Filters to extract key security indicators from log data, including 'Access Denied' errors from CloudTrail and 'Rejected' network connections from VPC Flow Logs, thereby establishing a baseline for automated threat detection.
