@@ -170,3 +170,19 @@ Similarly, a metric filter was created for "Rejected Connections" from VPC Flow 
 To validate the filters, actions expected to trigger them (e.g., attempting to access a non-existent S3 bucket for Access Denied; attempting blocked network connections from an EC2 instance for Rejected Connections) were performed, and the corresponding metrics observed in the CloudWatch Metrics console.
 
 This day's work demonstrates the development and implementation of CloudWatch Metric Filters to extract key security indicators from log data, including 'Access Denied' errors from CloudTrail and 'Rejected' network connections from VPC Flow Logs, thereby establishing a baseline for automated threat detection.
+
+## Day 8: Setting Up CloudWatch Alarms for Security Events
+
+The goal for this day was to create CloudWatch Alarms that trigger notifications when the metrics from the previously defined filters exceed predefined thresholds. This required understanding CloudWatch Alarms configuration, including alarm states (OK, ALARM, INSUFFICIENT_DATA), threshold setting, and notification actions. The platforms and services involved are the AWS Management Console, AWS CloudWatch Alarms, and AWS SNS (as the notification target).
+
+A thorough understanding of CloudWatch Alarms, their various states, and their function in monitoring metrics to trigger actions was established. The transition from merely logging events to setting alarms represents a fundamental shift from reactive security (investigating after an event) to proactive security (being alerted *as* an event unfolds), significantly reducing the Mean Time To Detect (MTTD).
+
+First, an Amazon SNS (Simple Notification Service) topic (`yourname-security-alerts`, e.g., `campbellbaxley-security-alerts`) was created to serve as the notification channel. The user's email address was subscribed to this SNS topic, and the subscription was successfully confirmed via the email received.
+
+Next, a CloudWatch Alarm was created for the `CloudTrailAccessDeniedCount` metric (from the `SecurityMetrics` namespace). The alarm (`HighAccessDeniedAlarm`) was configured with a `Statistic` of `Sum` over a `Period` of 5 minutes. A `Static Threshold` type was set, with the alarm triggering `Whenever CloudTrailAccessDeniedCount is Greater than 3`. This means that if three or more "Access Denied" errors occur within a five-minute window, the alarm will trigger. The `yourname-security-alerts` SNS topic was selected for notification.
+
+A similar alarm was created for the `VPCFlowRejectedCount` metric. This alarm (`HighRejectedTrafficAlarm`) was configured with a `Statistic` of `Sum` over a `Period` of 5 minutes. The threshold was set to `Greater than 5 rejected connections` in 5 minutes, linking it to the same `yourname-security-alerts` SNS topic. This demonstrates the practical challenge of tuning detection rules to balance detecting genuine threats and preventing alert fatigue.
+
+To test the alarms, actions expected to generate "Access Denied" errors (e.g., repeatedly attempting to create a non-existent S3 bucket) and rejected network connections (e.g., attempting a blocked outbound connection from an EC2 instance) were intentionally performed multiple times within the specified period. The successful receipt of email notifications from both alarms was verified.
+
+This day's work demonstrates the configuration of Amazon CloudWatch Alarms to proactively monitor security metrics, triggering real-time notifications via Amazon SNS for critical events such as excessive 'Access Denied' attempts and suspicious network traffic.
