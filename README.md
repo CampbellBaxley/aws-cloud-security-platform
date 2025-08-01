@@ -186,3 +186,14 @@ A similar alarm was created for the `VPCFlowRejectedCount` metric. This alarm (`
 To test the alarms, actions expected to generate "Access Denied" errors (e.g., repeatedly attempting to create a non-existent S3 bucket) and rejected network connections (e.g., attempting a blocked outbound connection from an EC2 instance) were intentionally performed multiple times within the specified period. The successful receipt of email notifications from both alarms was verified.
 
 This day's work demonstrates the configuration of Amazon CloudWatch Alarms to proactively monitor security metrics, triggering real-time notifications via Amazon SNS for critical events such as excessive 'Access Denied' attempts and suspicious network traffic.
+
+
+## Day 9: Configuring Amazon SNS for Security Alerts
+
+The goal for this day was to deepen the understanding of Amazon SNS and ensure its comprehensive configuration for various security alert types. This involved reinforcing skills in SNS topic management, understanding different subscription types (with a focus on email), and conceptually grasping message publishing. The platforms and services primarily used are the AWS Management Console and AWS SNS.
+
+A review of SNS fundamentals was crucial, focusing on its role as a "fan-out" service for notifications. This design principle, where SNS acts as a decoupling layer between detection mechanisms (like CloudWatch Alarms and future GuardDuty integrations) and notification consumers (such as email or Lambda functions), is critical for scalable and resilient alerting.
+
+The confirmation status of the email subscription to the `campbellbaxley-security-alerts` SNS topic was double-checked and verified to be `Confirmed`. A test message was then manually published to the `campbellbaxley-security-alerts` SNS topic via the AWS Console to confirm the end-to-end notification path to the subscribed email address.
+
+While full implementation was not required, the Boto3 documentation for publishing messages to an SNS topic was reviewed to understand how automated systems (e.g., Lambda functions) would programmatically send alerts. This understanding of SNS's broader capabilities, beyond simple email, hints at future, more sophisticated integrations with incident response tools or ticketing systems.
