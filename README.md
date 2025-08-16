@@ -197,3 +197,16 @@ A review of SNS fundamentals was crucial, focusing on its role as a "fan-out" se
 The confirmation status of the email subscription to the `campbellbaxley-security-alerts` SNS topic was double-checked and verified to be `Confirmed`. A test message was then manually published to the `campbellbaxley-security-alerts` SNS topic via the AWS Console to confirm the end-to-end notification path to the subscribed email address.
 
 While full implementation was not required, the Boto3 documentation for publishing messages to an SNS topic was reviewed to understand how automated systems (e.g., Lambda functions) would programmatically send alerts. This understanding of SNS's broader capabilities, beyond simple email, hints at future, more sophisticated integrations with incident response tools or ticketing systems.
+
+
+## Day 10: Integrating Amazon GuardDuty for Intelligent Threat Detection
+
+The objective for this day was to enable and integrate Amazon GuardDuty, a managed threat detection service, to enhance security monitoring. This involved learning about GuardDuty enablement, understanding its finding types and severity, generating sample findings, and integrating with EventBridge for alerts. The platforms and services utilized include the AWS Management Console, AWS GuardDuty, AWS EventBridge, and AWS SNS.
+
+A thorough understanding of GuardDuty's capabilities was paramount. It is an intelligent threat detection service that analyzes CloudTrail, VPC Flow Logs, and DNS logs using machine learning and threat intelligence. This represents a strategic shift from building custom detection logic to leveraging AWS's managed security intelligence, offloading the burden of maintaining threat intelligence and ML models. Understanding its finding types and severity levels (Low, Medium, High) is also important.
+
+GuardDuty was enabled in the AWS Management Console, noting its 30-day free trial. To facilitate testing of the alerting setup without performing actual malicious activities, sample findings were generated directly from the GuardDuty console. The ability to generate sample findings is a critical component of security testing and validation, allowing for safe and repeatable security operations.
+
+An EventBridge rule was then configured to route GuardDuty findings to the SNS topic. In the AWS EventBridge console, a new rule (`campbellbaxley-guardduty-findings-to-sns`) was created. The `Event source` was set to `AWS services`, and the `AWS service` was set to `GuardDuty` with the `Event type` of `GuardDuty Finding`. The `Target` was selected as an `SNS topic`, pointing to the `campbellbaxley-security-alerts` SNS topic.
+
+To test the integration, new sample GuardDuty findings were generated, and the receipt of email notifications via SNS was verified. This day's work demonstrates the integration of Amazon GuardDuty for intelligent, continuous threat detection across AWS accounts and workloads, leveraging machine learning and threat intelligence to identify suspicious activities and funnel findings to a centralized alerting system.
