@@ -220,3 +220,20 @@ The process began by researching Lambda as a serverless compute service that exe
 A basic Lambda function named `campbellbaxley-security-remediation-processor` was created in the AWS Lambda console. Python 3.x was chosen as the runtime. For the `Execution role`, a new role with basic Lambda permissions was created, which automatically grants the function permission to upload logs to CloudWatch Logs. Understanding that Lambda functions operate under an IAM execution role is crucial for security, as it reinforces the principle of least privilege in the context of automated actions. A simple Python "Hello World" code was pasted into the function editor.
 
 The function was then tested using the "Test" button in the Lambda console, verifying successful execution and log output to CloudWatch Logs. This day's work demonstrates the acquisition of foundational knowledge in serverless computing by developing and deploying an AWS Lambda function, thereby showcasing proficiency in event-driven architecture and basic cloud automation.
+
+## Day 12: Lambda for Automated IAM Remediation (e.g., Revoking Access Keys)
+
+The goal for this day was to create a Lambda function that automatically revokes an exposed IAM user access key, triggered by a security finding. This involved acquiring skills in Python Boto3 for IAM, parsing JSON event data, and understanding IAM policy management. The platforms and services utilized are AWS Lambda, AWS IAM, AWS EventBridge, and AWS SNS.
+
+The remediation scenario focused on "Exposed Access Keys," a common security risk. Automated remediation in this context dramatically reduces the time an attacker has to exploit a compromised credential, directly impacting the "Containment" phase of incident response.
+
+A new Lambda function (`campbellbaxley-revoke-access-key-lambda`) was created. Its execution role was modified to include IAM permissions necessary to list and deactivate access keys for IAM users (`iam:ListAccessKeys`, `iam:UpdateAccessKey`). It is paramount to adhere to the principle of least privilege by limiting these permissions. The explicit instruction to grant only the necessary IAM permissions to the Lambda execution role reinforces this principle for automated actions, preventing over-privileged functions that could be exploited.
+
+The Python code for the Lambda function, using Boto3, was written to:
+- Parse a test JSON event to extract the `AccessKeyId` and `UserName`.
+- Use `iam.client.update_access_key()` to set the key's status to `Inactive`.
+- Send a notification via SNS to confirm the action taken.
+
+To test the remediation, a dummy IAM user with an access key was created. A manual test event, mimicking an exposed access key for this dummy user, was sent to the Lambda function. The successful deactivation of the access key by the Lambda function and the receipt of an SNS notification were verified.
+
+This day's work demonstrates the development and deployment of an automated, event-driven AWS Lambda function for IAM remediation, capable of deactivating exposed access keys in response to security findings, thereby significantly reducing the window of vulnerability.
