@@ -237,3 +237,23 @@ The Python code for the Lambda function, using Boto3, was written to:
 To test the remediation, a dummy IAM user with an access key was created. A manual test event, mimicking an exposed access key for this dummy user, was sent to the Lambda function. The successful deactivation of the access key by the Lambda function and the receipt of an SNS notification were verified.
 
 This day's work demonstrates the development and deployment of an automated, event-driven AWS Lambda function for IAM remediation, capable of deactivating exposed access keys in response to security findings, thereby significantly reducing the window of vulnerability.
+
+## Day 13: Lambda for Automated Network Remediation (e.g., Blocking Malicious IPs via NACLs)
+
+The objective for this day was to create a Lambda function that automatically blocks malicious IP addresses at the network level using Network Access Control Lists (NACLs). This involved acquiring skills in Python Boto3 for EC2/VPC (NACLs), understanding network security concepts (NACLs vs. Security Groups), and IP address parsing.
+
+The platforms and services utilized are AWS Lambda, AWS EC2 (VPC, NACLs), AWS EventBridge, and AWS S3 (for a blocked IP list). A foundational understanding of NACLs as stateless firewalls at the subnet level, and their distinction from stateful Security Groups, was established. Implementing both demonstrates an understanding of layered network security.
+
+A new S3 bucket (`campbellbaxley-blocked-ips`) was created to store a list of blocked IP addresses, illustrating the concept of operationalizing threat intelligence, where remediation actions feed back into future detection capabilities.
+
+A new Lambda function (`campbellbaxley-block-ip-nacl-lambda`) was created, and its execution role was modified to include permissions to describe and modify NACLs (`ec2:DescribeNetworkAcls`, `ec2:CreateNetworkAclEntry`, etc.) and to add blocked IPs to the S3 bucket (`s3:PutObject`).
+
+The Python code for the Lambda function, using Boto3, was written to:
+- Parse an incoming EventBridge event from GuardDuty to extract the malicious sourceIPAddress.
+- Use `ec2.client.create_network_acl_entry` to add a `DENY` rule for the malicious IP in the default NACL. A high rule number (e.g., 1000) was used to ensure the rule is processed first.
+- Add the blocked IP to a `blocked_ips.txt` file in the `campbellbaxley-blocked-ips` S3 bucket.
+- Send an SNS notification confirming the action.
+
+An EventBridge rule was configured to trigger this Lambda function specifically for GuardDuty findings like `UnauthorizedAccess:EC2/SSHBruteForce` and `Portscan:EC2/ExternalPortscan`. The successful blocking of the IP in the NACL, its addition to the S3 list, and the receipt of an SNS notification were all verified by generating a sample GuardDuty finding.
+
+This day's work demonstrates automated network-level incident response by developing an AWS Lambda function to dynamically block malicious IP addresses in Network Access Control Lists (NACLs) based on real-time threat intelligence from Amazon GuardDuty.
