@@ -274,3 +274,15 @@ The Python code for the Lambda function, using Boto3, was written to:
 - Send an SNS notification confirming the isolation.
 
 An EventBridge rule was configured to trigger this Lambda function for GuardDuty findings related to EC2 compromise (e.g., `UnauthorizedAccess:EC2/MaliciousIpCaller.DNS`). The successful change of the EC2 instance's security group to the isolation group, effectively cutting off its network access, was verified. This day's work demonstrates the engineering of automated EC2 instance isolation capabilities using AWS Lambda and Security Groups, enabling rapid containment of compromised compute resources in response to detected threats.
+
+## Day 15: Leveraging AWS Systems Manager for Incident Response Actions
+
+The goal for this day was to explore AWS Systems Manager Automation as a tool for more complex, orchestrated incident response actions on EC2 instances. This involved acquiring skills in Systems Manager (SSM) concepts, Automation runbooks, and its role in EC2 instance management. The platforms and services utilized are the AWS Management Console, AWS Systems Manager, and AWS EC2.
+
+The process began by researching AWS Systems Manager as a service for centrally managing and operating nodes at scale. The Automation capability and its runbooks were of particular interest. Systems Manager Automation introduces the concept of orchestrating multi-step incident response playbooks, moving beyond single, isolated remediation actions to coordinated, automated workflows.
+
+An understanding of how SSM Agent (if installed on EC2 instances) enables remote execution of commands (SendCommand) and automation was established. Sample Automation runbooks related to EC2 instance management were reviewed in the AWS Systems Manager console to provide practical context for their use in security operations.
+
+The conceptual use of SSM to trigger forensic actions on a compromised instance, such as collecting logs, memory dumps, or creating snapshots, was understood. While a complex implementation was not required, grasping this possibility directly links automated detection and initial containment to the deeper, investigative phases of incident response. This demonstrates an understanding of the full incident response lifecycle, from detection and containment to eradication and recovery.
+
+Finally, consideration was given to how Lambda functions could initiate SSM Automation runbooks for multi-step, complex remediation workflows. This day's work explores AWS Systems Manager Automation for orchestrating advanced incident response actions on EC2 instances, understanding its role in forensic data collection and automated remediation workflows.
