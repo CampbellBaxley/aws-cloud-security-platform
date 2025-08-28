@@ -257,3 +257,20 @@ The Python code for the Lambda function, using Boto3, was written to:
 An EventBridge rule was configured to trigger this Lambda function specifically for GuardDuty findings like `UnauthorizedAccess:EC2/SSHBruteForce` and `Portscan:EC2/ExternalPortscan`. The successful blocking of the IP in the NACL, its addition to the S3 list, and the receipt of an SNS notification were all verified by generating a sample GuardDuty finding.
 
 This day's work demonstrates automated network-level incident response by developing an AWS Lambda function to dynamically block malicious IP addresses in Network Access Control Lists (NACLs) based on real-time threat intelligence from Amazon GuardDuty.
+
+## Day 14: Automated EC2 Instance Isolation (Security Groups)
+
+The goal for this day was to create a Lambda function that automatically isolates a compromised EC2 instance by modifying its associated Security Groups. This is a critical capability for containing threats and preventing lateral movement within the network. The platforms and services utilized are AWS Lambda, AWS EC2 (Security Groups), AWS EventBridge, and AWS SNS.
+
+The concept of isolating a compromised EC2 instance is critical to prevent further damage or lateral movement. This directly addresses the "Containment" phase of incident response, where rapid isolation of a compromised resource is paramount.
+
+An "Isolation" Security Group (`campbellbaxley-isolation-sg`) was created in the EC2 console, configured with explicit `DENY ALL` inbound and outbound rules, to act as a quarantine.
+
+A new Lambda function (`campbellbaxley-isolate-ec2-lambda`) was created. Its execution role was modified to include permissions to describe EC2 instances and modify security groups (`ec2:DescribeInstances`, `ec2:ModifyInstanceAttribute`), adhering to the principle of least privilege.
+
+The Python code for the Lambda function, using Boto3, was written to:
+- Parse an incoming GuardDuty finding for the `instanceId`.
+- Use `ec2.client.modify_instance_attribute()` to detach the instance from its current security group and attach it to the `campbellbaxley-isolation-sg`.
+- Send an SNS notification confirming the isolation.
+
+An EventBridge rule was configured to trigger this Lambda function for GuardDuty findings related to EC2 compromise (e.g., `UnauthorizedAccess:EC2/MaliciousIpCaller.DNS`). The successful change of the EC2 instance's security group to the isolation group, effectively cutting off its network access, was verified. This day's work demonstrates the engineering of automated EC2 instance isolation capabilities using AWS Lambda and Security Groups, enabling rapid containment of compromised compute resources in response to detected threats.
